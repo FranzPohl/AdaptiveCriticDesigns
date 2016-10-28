@@ -4,8 +4,8 @@
 % 3. Policy
 % 4. Actor Critic Approximation
 
-print_plots = true;
-saveNet = true;
+print_plots = false;
+saveNet = false;
 
 denorm = mapminmax( 'reverse',[xn(:,1:end-1); u(1:length(xn)-1)], ptx );
 xhat2 = mapminmax( 'reverse',xhat, pty );

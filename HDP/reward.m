@@ -18,7 +18,7 @@ switch choice
         r = -x(1).^2;
                 
     case 3 % angle and angular rate
-        r = -1 * ( x(:)'*[.9, 0; 0, 0.1]*x(:) + .1*u^2);
+        r = -( x(:)'*[.9, 0; 0, 0.1]*x(:) + .1*u^2 );
         %r = - x(:)'*[.9, 0; 0, .1]*x(:);
                 
     case 4 % cosine
