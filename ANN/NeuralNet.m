@@ -36,7 +36,7 @@ classdef NeuralNet < handle
         %
         % obj - neural network object with random ini weights and biases
         %rng(1397524); % to keep consistent results for now
-        rng(14051955);
+        %rng(14051955);
            obj.numLayers  = length(struct);
            obj.numInputs  = struct(1);    
            obj.numOutputs = struct(end); 

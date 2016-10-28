@@ -4,8 +4,8 @@
 % 3. Policy
 % 4. Actor Critic Approximation
 
-print_plots = false;
-saveNet = false;
+print_plots = true;
+saveNet = true;
 
 denorm = mapminmax( 'reverse',[xn(:,1:end-1); u(1:length(xn)-1)], ptx );
 xhat2 = mapminmax( 'reverse',xhat, pty );
@@ -13,36 +13,36 @@ xhat2 = mapminmax( 'reverse',xhat, pty );
 %% 1. ANN Weights
 
 %Actorweights
-figure()
-subplot(3,1,1)
-plot(1:length(ActorWeights(1,:)), ActorWeights(1:numNeuronA,:))
-subplot(3,1,2)
-plot(1:length(ActorWeights(1,:)), ActorWeights(numNeuronA+1:2*numNeuronA,:));
-subplot(3,1,3)
-plot(1:length(ActorWeights(1,:)), ActorWeights(2*numNeuronA+1:3*numNeuronA,:))
-
-%Actor Bias
-figure()
-subplot(2,1,1)
-plot(1:length(ActorBias(1,:)), ActorBias(1:numNeuronA,:))
-subplot(2,1,2)
-plot(1:length(ActorBias(1,:)), ActorBias(numNeuronA+1,:))
-
-%Critic Weights
-figure()
-subplot(3,1,1)
-plot(1:length(CriticWeights(1,:)), CriticWeights(1:numNeuronC,:))
-subplot(3,1,2)
-plot(1:length(CriticWeights(1,:)), CriticWeights(numNeuronC+1:2*numNeuronC,:));
-subplot(3,1,3)
-plot(1:length(CriticWeights(1,:)), CriticWeights(2*numNeuronC+1:3*numNeuronC,:));
-
-%Critic Bias
-figure()
-subplot(2,1,1)
-plot(1:length(CriticBias(1,:)), CriticBias(1:numNeuronA,:))
-subplot(2,1,2)
-plot(1:length(CriticBias(1,:)), CriticBias(numNeuronA+1,:))
+% figure()
+% subplot(3,1,1)
+% plot(1:length(ActorWeights(1,:)), ActorWeights(1:numNeuronA,:))
+% subplot(3,1,2)
+% plot(1:length(ActorWeights(1,:)), ActorWeights(numNeuronA+1:2*numNeuronA,:));
+% subplot(3,1,3)
+% plot(1:length(ActorWeights(1,:)), ActorWeights(2*numNeuronA+1:3*numNeuronA,:))
+% 
+% %Actor Bias
+% figure()
+% subplot(2,1,1)
+% plot(1:length(ActorBias(1,:)), ActorBias(1:numNeuronA,:))
+% subplot(2,1,2)
+% plot(1:length(ActorBias(1,:)), ActorBias(numNeuronA+1,:))
+% 
+% %Critic Weights
+% figure()
+% subplot(3,1,1)
+% plot(1:length(CriticWeights(1,:)), CriticWeights(1:numNeuronC,:))
+% subplot(3,1,2)
+% plot(1:length(CriticWeights(1,:)), CriticWeights(numNeuronC+1:2*numNeuronC,:));
+% subplot(3,1,3)
+% plot(1:length(CriticWeights(1,:)), CriticWeights(2*numNeuronC+1:3*numNeuronC,:));
+% 
+% %Critic Bias
+% figure()
+% subplot(2,1,1)
+% plot(1:length(CriticBias(1,:)), CriticBias(1:numNeuronA,:))
+% subplot(2,1,2)
+% plot(1:length(CriticBias(1,:)), CriticBias(numNeuronA+1,:))
 
 %% 2. Reward and MSE
 
@@ -58,7 +58,7 @@ subplot(3,1,3)
 plot(mseC)
 xlabel('epochs'); ylabel('mse Critic [-]');
 if print_plots == true
-    print('HDP_trqLimited','-dpng','-r300');
+    print('HDP_trqLimited','-deps','-r300');
 end
 
 %% 3. Policy
@@ -87,7 +87,7 @@ xlabel('time [s]'); ylabel('\theta_d [deg/s]')
 xlim([0 tmax]);
 grid on
 if print_plots == true
-    print('anglesHDP_results_trqLimited','-dpng','-r300');
+    print('anglesHDP_results_trqLimited','-deps','-r300');
 end
 
 %% 4. Actor & Critic Approximation
@@ -109,7 +109,7 @@ end
 figure(); clf
 
 % 3D Surf Critic
-subplot(2,6,[1:3 7:9]);
+subplot(2,5,[1:2 6:7]);
 surf(X1,X2,Zcrit)
 title('Value Function/Critic')
 xlabel('\theta'); ylabel('\theta_{dot}'); zlabel('J');
@@ -120,7 +120,7 @@ xlim([-1 1]); ylim([-1 1]);
 hold off
 
 % 3D Surf Actor
-subplot(2,6,[4:6 10:12])
+subplot(2,5,[4:5 9:10])
 surf(X1,X2,Zact)
 title('Control/Actor')
 xlabel('\theta'); ylabel('\theta_{dot}'); zlabel('control');
@@ -131,7 +131,7 @@ plot3(Xlog(1,:),Xlog(2,:),y,'k.');
 xlim([-1 1]); ylim([-1 1]);
 hold off
 if print_plots == true
-    print('ACshape_trqLimited','-dpng','-r300');
+    print('ACshape_trqLimited','-deps','-r300');
 end
 
 % Contour PLot Critic
@@ -142,7 +142,7 @@ xlabel('\theta'); ylabel('\theta_{dot}')
 title('Critic');
 colorbar
 if print_plots == true
-    print('Critic','-dpng','-r300');
+    print('Critic','-deps','-r300');
 end
 
 % Contour Plot Actor
@@ -154,11 +154,11 @@ title('Actor');
 colorbar
 hold on
 if print_plots == true
-    print('Actor','-dpng','-r300');
+    print('Actor','-deps','-r300');
 end
 
 % Save Neural Net
 if saveNet == true
-    save('criticUpswing','critic');
-    save('actorUpswing','actor');
+    save('criticSimplePendulum','critic');
+    save('actorSimplePendulum','actor');
 end

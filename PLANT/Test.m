@@ -4,8 +4,7 @@ close all; clear; clc;
 
 %% Simulation parameters
 tmax = 2;
-int  = false;
-dt   = 0.005;
+dt   = 0.01;
 t    = 0:dt:tmax;
 n    = length(t);
 
@@ -15,25 +14,23 @@ choice = 1;
 %% Simulate
 
 if choice == 1 % inverted Pendulum Test
+    
     % loading graphics
     invertedPendulum = IPGraphics(0);
 
     %initialize x
     x = [pi; 0];
-    ur = [-.1 .1];
-    %u = ones(1,n)*.7;
-    u = sin(t*6)*0.05;
-    %u = rand(1,n) * (max(ur)-min(ur)) + min(ur);
-    %u = random_walk(round(randn(1)),n-1);
+    u = sign(randn(1))*sin(10*t)*.1;
     invertedPendulum.update(x(1,1));    
     
     for i = 1:n
         
         x(:,i+1) = Inverted_Pendulum(x(:,i),u(i),dt);
+        x(1,i+1) = x(1,i+1) + 2*pi * [abs(x(1,i+1))>pi] * -sign(x(1,i+1));
         invertedPendulum.update(x(1,i+1));
-        if abs(x(2,i+1)) > 35
-            break;
-        end
+%         if abs(x(2,i+1)) > 35
+%             break;
+%         end
 
     end 
     figure()

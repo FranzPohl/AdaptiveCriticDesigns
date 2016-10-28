@@ -1,4 +1,4 @@
-function r = reward(choice, x)
+function r = reward(choice, x, u)
 % Reward function calculates the reward based on the state. It is
 % independent of the way on how it reached that state (independent of
 % action)
@@ -18,7 +18,7 @@ switch choice
         r = -x(1).^2;
                 
     case 3 % angle and angular rate
-        r = - x(:)'*[.85, 0; 0, .1]*x(:);
+        r = -1 * ( x(:)'*[.9, 0; 0, 0.1]*x(:) + .1*u^2);
         %r = - x(:)'*[.9, 0; 0, .1]*x(:);
                 
     case 4 % cosine

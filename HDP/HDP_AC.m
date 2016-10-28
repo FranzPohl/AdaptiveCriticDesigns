@@ -13,14 +13,14 @@ addpath(fullfile(mfilepath,'../PLANT'));
 addpath(fullfile(mfilepath,'../MODEL')); 
 
 % Load pre-trained model, critic and actor
-load('model_trqLimited.mat')
+load('model.mat')
 r2d = 180/pi;
 
 %% Actor and Critic Network
 
 % Actor 
 numInA     = 2;
-numNeuronA = 8;
+numNeuronA = 10;
 numOutA    = 1;
 actor = NeuralNet([numInA, numNeuronA, numOutA]);
 actor.transferFun{end} = sigmoid;
@@ -40,7 +40,7 @@ critic = NeuralNet([numInC, numNeuronC, numOutC]);
 % Critic RL parameters
 gamma   = 0.97;                                                                           
 etaC    = 0.05; 
-tauC    = 0.00;   
+tauC    = 0.01;   
 muC     = 0.00;   
 lambdaC = 0.0;
 
@@ -63,25 +63,19 @@ CriticWeights= [critic.weights{1}(:,1); critic.weights{1}(:,2); critic.weights{2
 CriticBias   = [critic.bias{1}; critic.bias{2}];
 
 % Limitations
-LB = [-pi; 0]; %Lower Bound
-UB = [+pi; 0]; %Upper Bound
 xdl= 35;
 
 % Simulation time
 tmax    = 5;
-Ntrials = 400;
+Ntrials = 200;
 dt      = 0.005;
 t       = 0:dt:tmax;
 n       = length(t);
-Jstar   = 0; %tmax/dt; 
+Jstar   = 0;
+eps     = 0.1;
 
 % Initial Conditions
-xini = lhsdesign(Ntrials,2);
-xini = bsxfun( @plus, LB, bsxfun(@times, xini', (UB - LB)) );
-% xini = bsxfun(@times, randn(2,Ntrials), [2/3*pi; 10/3] );
-xini(1,:) = xini(1,:) + 2*pi .* [ abs(xini(1,:))>pi ] .* -sign(xini(1,:));
-xini(:,end) = [pi;0];
-%xini = [sign(randn(1,Ntrials))*pi; randn(1,Ntrials)];
+xini = [randn(1,n).*.4;randn(1,n).*0];
 
 for trial = 1:Ntrials
    
@@ -98,12 +92,19 @@ for trial = 1:Ntrials
     x(1) = x(1) + 2*pi * [ abs(x(1))>pi ] * -sign(x(1));
     xn = mapminmax( 'apply', x, pty ); 
     xhat = xn;
+    eps = eps*exp(-.1*trial);
     
     % START OF TRIAL
     for j = 1:n-1
         
-        u(j) = actor.FFwrd( xn(:,j) );    
-       
+        if rand(1) < eps
+            u(j) = 2*rand(1) - 1;   
+            RandomAction = true;
+        else 
+            RandomAction = false;
+            u(j) = actor.FFwrd( xn(:,j) ); 
+        end
+        
         denorm = mapminmax( 'reverse', [ xn(:,j);u(j) ], ptx );
         
         x(:,j+1) = Inverted_Pendulum( x(:,j), denorm(3), dt );
@@ -111,7 +112,7 @@ for trial = 1:Ntrials
         xhat(:,j+1) = model.FFwrd( [xn(:,j);u(j)] );
         xn(:,j+1)= mapminmax( 'apply', x(:,j+1), pty );
         
-        r(j) = reward( choice, xn(:,j+1) );
+        r(j) = reward( choice, xn(:,j+1), u(j) );
         J(j) = critic.FFwrd( xn(:,j+1) );
         delta_J = J(j) - Jstar;
         
@@ -119,7 +120,10 @@ for trial = 1:Ntrials
         dxdu = model.net_derivative( [xn(:,j); u(j)], dJdx );
         
         critic.updateC_HDP( xn(:,j:j+1), r(j), etaC, muC, gamma, lambdaC );
-        actor.updateA_HDP( xn(:,j), delta_J, dxdu(3), etaA, muA );
+        
+        if RandomAction == false
+            actor.updateA_HDP( xn(:,j), delta_J, dxdu(3), etaA, muA );
+        end
   
               
         if abs(x(2,j+1)) > xdl

@@ -19,10 +19,10 @@ Output = [];
 r2d = 180/pi;
 
 % Limits
-ulimit = .05;
+ulimit = .1;
 xLimit = 1.2;
 thetaLimit = pi;
-thetadLimit= 35;
+thetadLimit= 30;
 ur = [-ulimit ulimit];
 
 
@@ -42,10 +42,9 @@ if choice == 1
         %u = 10*-sign(x(1,1))*chirp(t,10,tmax,0);
         %u =  25*sign(randn(1))*sin(1*(1:n-1));
         %u = idinput(n-1,'prbs',[0 rand(1)],[-5 5]);
-        %
-        u = sin(t(1:end-1)*5)*0.05;
-        if mod(trial,1) == 0
-             u = rand(n-1) * (max(ur)-min(ur)) + min(ur);
+        u = sign(randn(1))*sin(10*t)*.1;
+        if mod(trial,2) == 0
+             u = rand(n-1) * ( max(ur)-min(ur) ) + min(ur);
         end
         %u = random_walk(randn(1)*2,n-1);    
 
@@ -173,7 +172,7 @@ val_input   = Input(:,round(ptrain*data_N)+1:end);
 val_output   = Output(:,round(ptrain*data_N)+1:end);
 test_data = [val_input; val_output];
 
-save('dataset_trqlimited','train_data','test_data','ptx','pty');
+save('dataset','train_data','test_data','ptx','pty');
 
 NNtoolinput = [train_input, val_input];
 NNtooloutpt = [train_output, val_output];
