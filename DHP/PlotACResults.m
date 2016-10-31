@@ -1,7 +1,12 @@
+%% Plot Results of DHP Algorithm
+
+savePlot = true;
+saveNets = true;
+
 % Reward and MSE
 figure()
 subplot(3,1,1)
-plot(length(Rlog), Rlog)
+plot(1:length(Rlog), Rlog)
 xlabel('epochs'); ylabel('reward[-]');
 subplot(3,1,2)
 plot(mseA)
@@ -9,7 +14,9 @@ xlabel('epochs'); ylabel('mse Actor')
 subplot(3,1,3)
 plot(mseC)
 xlabel('epochs'); ylabel('mse Critic [-]');
-% print('HDP_results','-dpng','-r300');
+if savePlot ==true
+    print('HDP_results','-deps','-r300');
+end
 
 figure()
 subplot(3,1,1)
@@ -24,7 +31,11 @@ subplot(3,1,3)
 plot(t(1:length(x)),x(2,:)*r2d)
 xlabel('time [s]'); ylabel('\theta_d [deg/s]')
 grid on
-% print('anglesHDP','-dpng','-r300');
+if savePlot == true;
+    print('anglesHDP','-deps','-r300');
+end
 
-% save('critic2','critic');
-% save('actor2','actor');
+if saveNets == true
+   save('criticDHP','critic');
+   save('actorDHP','actor');
+end

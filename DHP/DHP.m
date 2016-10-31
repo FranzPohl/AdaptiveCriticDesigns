@@ -20,7 +20,7 @@ actor = NeuralNet([numInA, numNeuronA, numOutA]);
 actor.transferFun{end} = sigmoid;
 
 % RL parameters Actor
-etaA   = 0.01;
+etaA   = 0.05;
 tauA   = 0.00;
 muA    = 0.00;
 eps0    = .1;  %exploration rate
@@ -33,7 +33,7 @@ critic = NeuralNet([numInC, numNeuronC, numOutC]);
 
 % RL Parameters Critic
 gamma   = 0.95;   % discount rate                                                                          
-etaC    = 0.05;  % learning rate of critic ANN  
+etaC    = 0.1;  % learning rate of critic ANN  
 tauC    = 0.00;   % time-step updates critic
 muC     = 0.00;   % momentum factor critic
 
@@ -75,7 +75,7 @@ t       = 0:dt:tmax;
 n       = length(t);
 r2d     =  180/pi;
 
-Ntrials = 200;
+Ntrials = 400;
 for trial = 1:Ntrials
     
     clear x;

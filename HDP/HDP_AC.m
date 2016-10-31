@@ -40,8 +40,8 @@ critic = NeuralNet([numInC, numNeuronC, numOutC]);
 % Critic RL parameters
 gamma   = 0.97;                                                                           
 etaC    = 0.05; 
-tauC    = 0.00;   %.01
-muC     = 0.01;   % 0  
+tauC    = 0.01;   %.01
+muC     = 0.10;   % 0  
 lambdaC = 0.0;
 
 % Choice of Reward function
