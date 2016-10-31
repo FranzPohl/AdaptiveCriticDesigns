@@ -223,7 +223,7 @@ classdef NeuralNet < handle
             for layer = obj.numLayers-2:-1:1
                 delta = ((obj.weights{layer+1})'*delta).*obj.transferFun{layer}.dfun(z{layer});
                 deltaB{layer} = delta;
-                deltaW{layer} = delta*(activation{layer})'; %CHECK,ARE Those matrices still the correct lengths
+                deltaW{layer} = delta*(activation{layer})'; 
             end   
         end
         
@@ -411,7 +411,7 @@ classdef NeuralNet < handle
         
         %% DHP TRAINING FUNCTIONS
         
-        function error = updateC_DHP( obj, x, lambda, da_dx, dxhat_dx, dr, eta, mu, gamma )
+        function error = updateC_DHP( obj, x, lambda, da_dx, dxhat_dx, dr_dx, eta, mu, gamma )
         % updates the critic network weights according to DHP law
         % Inputs: states visited x (size determines batch size)
         %         rewards received
@@ -419,10 +419,10 @@ classdef NeuralNet < handle
         %         learning race eta
         %         momentum factor mu
             for i = obj.numInputs
-               dJtp1_dx(i) = lambda(:,2)'*dxhat_dx(:,i) + lambda(:,2)'*dxhat_dx(:,3)*da_dx(i); 
+               dJtp1_dx(i) = lambda(:,2)'*dxhat_dx(:,i) + lambda(:,2)'*(dxhat_dx(:,3).*da_dx(i)); 
             end
             y = lambda(:,1);
-            yD = gamma*dJtp1_dx' + dr(1:2); % desired output
+            yD = gamma * dJtp1_dx' + dr_dx; % desired output
             error = y - yD;
             data = [x; yD];
             obj.updateNet(1, data, eta, mu, 0); 
