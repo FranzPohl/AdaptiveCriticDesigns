@@ -1,6 +1,6 @@
 %% Plot Results of DHP Algorithm
 
-savePlot = false;
+savePlot = true;
 saveNets = false;
 
 % Reward and MSE
@@ -34,6 +34,18 @@ grid on
 if savePlot == true;
     print('anglesHDP','-deps','-r300');
 end
+
+figure();
+plot(lambda(1,:)); 
+hold on; 
+xlabel('timesteps');
+xlim([0,tmax/dt]);
+plot(lambda(2,:));
+legend('dJ/d\theta','dJ/d\theta_d','Location','SouthEast');
+if savePlot == true
+    print('dJdx','-deps','-r300');
+end
+
 
 if saveNets == true
    save('criticDHP','critic');
