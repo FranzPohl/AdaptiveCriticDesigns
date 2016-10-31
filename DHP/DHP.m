@@ -87,7 +87,7 @@ for trial = 1:Ntrials
     clear lambda;
     
     % initial state
-    x = [randn(1)*0.4; 0]; % xn0
+    x = [randn(1); 0]; % xn0
     xn= mapminmax('apply',x,pty); 
     eps = eps0 * exp( -.1*trial );
     for j = 1:n-1
