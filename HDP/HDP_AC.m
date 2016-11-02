@@ -66,8 +66,8 @@ CriticBias   = [critic.bias{1}; critic.bias{2}];
 xdl= 35;
 
 % Simulation time
-tmax    = 5;
-Ntrials = 200;
+tmax    = 3;
+Ntrials = 300;
 dt      = 0.005;
 t       = 0:dt:tmax;
 n       = length(t);
@@ -88,6 +88,7 @@ for trial = 1:Ntrials
     clear xn;
     clear xhat;
     
+%     xini = [sign(randn(1))*trial*.01;0];
     x = xini(:,trial);
     x(1) = x(1) + 2*pi * [ abs(x(1))>pi ] * -sign(x(1));
     xn = mapminmax( 'apply', x, pty ); 
