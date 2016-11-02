@@ -9,9 +9,9 @@ if nargin == 1
     u = 0;
 end
     % case simple inverted pendulum
-    drdx1 = 2*.9*x(1);
-    drdx2 = 2*.1*x(2);
-    drdu  = 2*.1*u;
+    drdx1 = 2*2e-2*x(1);
+    drdx2 = 2*1e-3*x(2);
+    drdu  = 2*1e-3*u;
     
     dr = [drdx1; drdx2; drdu];
 

@@ -14,26 +14,27 @@ load('model_trqlimited.mat')
 
 % Actor 
 numInA     = 2;
-numNeuronA = 10;
+numNeuronA = 8;
 numOutA    = 1;
 actor = NeuralNet([numInA, numNeuronA, numOutA]);
 actor.transferFun{end} = sigmoid;
 
 % RL parameters Actor
-etaA   = 0.05;
+etaA   = 0.02;
 tauA   = 0.00;
 muA    = 0.00;
 eps0    = .1;  %exploration rate
 
 % Critic
 numInC     = 2;
-numNeuronC = 8;
+numNeuronC = 10;
 numOutC    = 2;
 critic = NeuralNet([numInC, numNeuronC, numOutC]);
+critic.transferFun{end} = sigmoid;
 
 % RL Parameters Critic
 gamma   = 0.95;   % discount rate                                                                          
-etaC    = 0.1;  % learning rate of critic ANN  
+etaC    = 0.09;  % learning rate of critic ANN  
 tauC    = 0.00;   % time-step updates critic
 muC     = 0.00;   % momentum factor critic
 
@@ -64,22 +65,30 @@ muC     = 0.00;   % momentum factor critic
 %% STEP III HDP CRITIC AND ACTOR CONNECTED
 
 % Limitations
-xl = .95*pi;
+LB = [-pi; 0]; %Lower Bound
+UB = [+pi; 0]; %Upper Bound
 xdl= 35;
 Rlog = [];
 
 % Simulation parameters
-tmax    = 5;
+Ntrials = 200;
+tmax    = 1.5;
 dt      = 0.005;
 t       = 0:dt:tmax;
 n       = length(t);
-r2d     =  180/pi;
+r2d     = 180/pi;
 
-Ntrials = 400;
+% initial conditions
+xini = lhsdesign(Ntrials,2);
+xini = bsxfun( @plus, LB, bsxfun(@times, xini', (UB - LB)) );
+% xini = bsxfun(@times, randn(2,Ntrials), [2/3*pi; 10/3] );
+xini(1,:) = xini(1,:) + 2*pi .* [ abs(xini(1,:))>pi ] .* -sign(xini(1,:));
+xini(:,end) = [pi;0];
+
 for trial = 1:Ntrials
     
     clear x;
-    clear xn;
+    clear xn;w
     clear u;
     clear r;
     clear errorC;
@@ -87,7 +96,7 @@ for trial = 1:Ntrials
     clear lambda;
     
     % initial state
-    x = [randn(1); 0]; % xn0
+    x = xini(:,trial);% [pi; 0]; 
     xn= mapminmax('apply',x,pty); 
     eps = eps0 * exp( -.1*trial );
     for j = 1:n-1
@@ -109,14 +118,15 @@ for trial = 1:Ntrials
         % Plant
         x(:,j+1) = Inverted_Pendulum( x(:,j), denorm(3), dt );
         x(1,j+1) = x(1,j+1) + 2*pi*[abs(x(1,j+1))>pi]*-sign(x(1,j+1));
+        xhat(:,j+1) = model.FFwrd( [xn(:,j);u(j)] );
         xn(:,j+1)= mapminmax( 'apply', x(:,j+1), pty );
-        r(j) = reward( xn(:,j+1) );
+        r(j) = reward( xn(:,j+1), u(j) );
         
         % Critic timestep + 1
         lambda(:,j+1) = critic.FFwrd( xn(:,j+1) );
         
         % derivatives
-        dr = reward_derivative( xn(:,j+1) );
+        dr = reward_derivative( xn(:,j+1), u(j) );
         da_dx = actor.net_derivativeSingle( xn(:,j) );
         dxhat_dx = model.net_derivativeSingle( [xn(:,j);u(j)] );
         
@@ -127,9 +137,9 @@ for trial = 1:Ntrials
             errorA(j) = actor.updateA_DHP( xn(:,j), lambda(:,j+1), dxhat_dx(:,3), dr(3), etaA, muA, gamma );
         end
      
-        if abs(x(2,j+1)) > xdl %|| abs(x(1,j+1)) > xl
-            break;
-        end
+%         if abs(x(2,j+1)) > xdl 
+%             break;
+%         end
         
     end
     
