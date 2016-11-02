@@ -21,7 +21,7 @@ r2d = 180/pi;
 % Limits
 ulimit = .05;
 xLimit = 1.2;
-thetaLimit = pi;
+thetaLimit = 1/2*pi;
 thetadLimit= 35;
 ur = [-ulimit ulimit];
 
@@ -29,7 +29,7 @@ ur = [-ulimit ulimit];
 %% Simulate
 
 % choice of Dynamic System: 1. Inverted Pendulum 2. Cart-Pole
-choice = 1;
+choice = 2;
 
 if choice == 1
     for trial = 1:Ntrials
@@ -78,15 +78,13 @@ else % Cart - Pole Problem
         clear u
 
         % initialize
-        x = [randn(1)*0.3; zeros(3,1)];
-        u = 0;
+        x = [randn(1)*0.3; 0; randn(1)*.3; 0];
+        u = rand(1,n-1) * 20 - 10;
         for i = 1:n-1
             
-            %u(i+1) = random_walk(u(i)); 
-            u(i) = rand(1) * (max(ur)-min(ur)) + min(ur);
             x(:,i+1) = Cart_Pole(x(:,i),u(i),dt);
 
-            if abs(x(1,i+1)) > xLimit || abs(x(4,i+1)) > thetadLimit
+            if abs(x(1,i+1)) > xLimit || abs(x(3,i+1)) > thetaLimit
                     break;
             end
         end
@@ -101,12 +99,20 @@ end % end data acquisition
 
 %% Normalization Gains
 
-xn1 = linspace(-thetaLimit, thetaLimit,1000);
-xn2 = linspace(-thetadLimit, thetadLimit,1000);
-un  = linspace(-ulimit, ulimit,1000);
-[~, ptx]= mapminmax([xn1;xn2; un]);
-[~, pty]= mapminmax([xn1;xn2]);
-
+if choice == 1 
+    xn1 = linspace(-thetaLimit, thetaLimit,1000);
+    xn2 = linspace(-thetadLimit, thetadLimit,1000);
+    [~, ptx]= mapminmax([xn1;xn2; un]);
+    [~, pty]= mapminmax([xn1;xn2]);
+else
+    xn1 = linspace(-xLimit, xLimit,1000);
+    xn2 = linspace(min(Input(2,:)), max(Input(2,:)),1000);
+    xn3 = linspace(-thetaLimit, thetaLimit,1000);
+    xn4 = linspace(-thetadLimit, thetadLimit,1000);    
+    un  = linspace(-ulimit, ulimit,1000);
+    [~, ptx]= mapminmax([xn1;xn2;x3;x4; un]);
+    [~, pty]= mapminmax([xn1;xn2;x3;x4]);
+end
 
 %% Plot
 
@@ -173,13 +179,13 @@ val_input   = Input(:,round(ptrain*data_N)+1:end);
 val_output   = Output(:,round(ptrain*data_N)+1:end);
 test_data = [val_input; val_output];
 
-save('dataset_trqlimited','train_data','test_data','ptx','pty');
+save('dataset_CP','train_data','test_data','ptx','pty');
 
 NNtoolinput = [train_input, val_input];
 NNtooloutpt = [train_output, val_output];
 
-save('NNtoolInp','NNtoolinput');
-save('NNtoolOut','NNtooloutpt');
+save('NNtoolInpCP','NNtoolinput');
+save('NNtoolOutCP','NNtooloutpt');
 
 
 

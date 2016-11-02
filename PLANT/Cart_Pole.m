@@ -1,10 +1,10 @@
 % Non-Linear dynamcis of a Cart-Pole system
 % xp = Cart_Pole(x,u)
 % states - state vector containing:
-%          horizontal position [m]
-%          velocity of cart [m/s]
-%      	   angle of pendulum (0 = upright) [rad]
-%          angular velocity of pendulum [rad/s]
+%          x  - horizontal position [m]
+%          xp - velocity of cart [m/s]
+%      	   th - angle of pendulum (0 = upright) [rad]
+%          thd- angular velocity of pendulum [rad/s]
 % u  - [N] force to push cart to left or right 
 % xp - [rad, rad/s] new state
 function xp = Cart_Pole(x,f,dt)
