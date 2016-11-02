@@ -3,7 +3,7 @@
 savePlot = true;
 saveNets = false;
 
-% Reward and MSE
+%% Reward and MSE
 figure()
 subplot(3,1,1)
 plot(1:length(Rlog), Rlog)
@@ -15,8 +15,10 @@ subplot(3,1,3)
 plot(mseC)
 xlabel('epochs'); ylabel('mse Critic [-]');
 if savePlot ==true
-    print('HDP_results','-deps','-r300');
+    print('DHPMSE','-deps','-r300');
 end
+
+%% Plot Response
 
 figure()
 subplot(3,1,1)
@@ -32,7 +34,7 @@ plot(t(1:length(x)),x(2,:)*r2d)
 xlabel('time [s]'); ylabel('\theta_d [deg/s]')
 grid on
 if savePlot == true;
-    print('anglesHDP','-deps','-r300');
+    print('ResponseDHP','-deps','-r300');
 end
 
 figure();

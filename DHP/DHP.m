@@ -1,4 +1,4 @@
-%% HDP Algortihm
+%% DHP Algortihm
 clc; clear; close all;
 
 % Add libraries
