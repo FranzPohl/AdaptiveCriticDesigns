@@ -1,6 +1,6 @@
 %% Plot Results of DHP Algorithm
 
-savePlot = true;
+savePlot = false;
 saveNets = false;
 
 %% Reward and MSE
