@@ -84,7 +84,7 @@ legend('Plant response','Model response','Location','SouthEast');
 subplot(3,1,3)
 plot(t(1:length(x)),x(2,:))
 hold on 
-plot(t(1:length(x)), xhat2(2,:))
+plot(t(1:length(x)), xhat2(2,:)*r2d)
 hold off
 xlabel('time [s]'); ylabel('\theta_d [deg/s]')
 xlim([0 tend]);

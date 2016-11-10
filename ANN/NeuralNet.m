@@ -157,7 +157,7 @@ classdef NeuralNet < handle
                 else
                     mse = 1;
                     mseetr = 1;
-                    fprintf('Epoch %i complete \n', epoch);
+                    %fprintf('Epoch %i complete \n', epoch);
                 end
                 
             end
@@ -229,7 +229,7 @@ classdef NeuralNet < handle
         
         
         
-        function cost = evaluate( obj,data,lambda )
+        function cost = evaluate( obj, data, lambda )
         % Evaluation of Neural Network performance
         % inputs: data tuples [[x];[y]]
            [~, nSamples] = size(data);

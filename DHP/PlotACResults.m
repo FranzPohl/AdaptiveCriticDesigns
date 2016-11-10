@@ -2,6 +2,7 @@
 
 savePlot = false;
 saveNets = false;
+xhat2 = mapminmax( 'reverse',xhat, pty );
 
 %% Reward and MSE
 figure()
@@ -25,14 +26,24 @@ subplot(3,1,1)
 plot(t(1:length(u)),u)
 xlabel('time [s]'); ylabel('actions')
 grid on
+
 subplot(3,1,2)
 plot(t(1:length(x)),x(1,:)*r2d)
+hold on 
+plot(t(1:length(x)),xhat2(1,:)*r2d)
+hold off
 xlabel('time [s]'); ylabel('\theta [deg]')
 grid on
+legend('Plant response','Model response','Location','SouthEast');
+
 subplot(3,1,3)
 plot(t(1:length(x)),x(2,:)*r2d)
 xlabel('time [s]'); ylabel('\theta_d [deg/s]')
 grid on
+hold on 
+plot(t(1:length(x)), xhat2(2,:)*r2d)
+hold off
+legend('Plant response','Model response','Location','SouthEast');
 if savePlot == true;
     print('ResponseDHP','-deps','-r300');
 end

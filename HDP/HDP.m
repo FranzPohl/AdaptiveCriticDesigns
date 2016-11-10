@@ -16,6 +16,7 @@ addpath(fullfile(mfilepath,'../MODEL'));
 load('model.mat')
 r2d = 180/pi;
 
+clear model
 %% Actor and Critic Network
 
 % Actor Neural Net
@@ -25,25 +26,34 @@ numOutA    = 1;                                     % number of output neurons a
 actor = NeuralNet([numInA, numNeuronA, numOutA]);   % construct actor NNN
 actor.transferFun{end} = sigmoid;                   % outputlayer transfer functions
         
-% Actor RL parameters
 etaA    = 0.01;                                     % learning rate actor NN
 lambdaA = 0.00;                                     % regularization rate actor NN
 muA     = 0.00;                                     % momentum actor NN
 Jstar   = 0;                                        % optimum value
 eps0    = 0.1;                                      % exploration rate
-lambda  = -.05;
+lambda  = -.01;
 
-% Critic
+% Critic Neural Net
 numInC     = 2;                                     % number of input neurons critic
 numNeuronC = 8;                                     % number of hidden neurons critic
 numOutC    = 1;                                     % number of output neurons critic             
 critic = NeuralNet([numInC, numNeuronC, numOutC]);  % construct critic NNN
 
-% Critic RL parameters
 gamma   = 0.97;                                     % discount factor                                                                                
 etaC    = 0.05;                                     % learning rate critic
 lambdaC = 0.00;                                     % regularization rate critic
 muC     = 0.10;                                     % momentum factor critic  
+
+% Model Neural Net
+numInputs = 3;
+numNeurons= 10;
+numOutputs= 2;
+struct =  [numInputs numNeurons numOutputs];
+model = NeuralNet(struct);
+
+etaM    = 0.05;                                     % learning rate critic
+lambdaM = 0.00;                                     % regularization rate critic
+muM     = 0.0;                                      % momentum factor critic  
 
 % Choice of Reward function
 choice = 3; % 1:binary, 2:quadratic, 3:weight matrix, 4:cosine
@@ -68,7 +78,7 @@ x0      = [randn(1,n).*.6;randn(1,n).*0];           % initial conditions
 livestream = false;                                 % set livestream on/off
 VideoFile;                                          % create video variables
 
-Ntrials = 200;                                      % total number of trials
+Ntrials = 400;                                      % total number of trials
 for trial = 1:Ntrials
    
     tic
@@ -113,7 +123,8 @@ for trial = 1:Ntrials
         dxdu = model.net_derivative( [xn(:,j); u(j)], dJdx );
         
         critic.updateC_HDP( xn(:,j:j+1), r(j), etaC, muC, gamma, lambdaC );
-        
+        model.SGD([xn(:,j);u(j);xn(:,j+1)], 1, 1, etaM, muM, lambdaM);
+
         if RandomAction == false
             actor.updateA_HDP( xn(:,j), delta_J, dxdu(3), etaA, muA );
         end
@@ -139,13 +150,14 @@ for trial = 1:Ntrials
     
     % Error
     mseC(trial) = critic.evaluateC(xn, gamma, r);
-    mseA(trial)  = .5*norm(J)/(length(xn));
+    mseA(trial) = .5*norm(J)/(length(xn));
+    mseM(trial) = model.evaluate([xn(:,1:end-1); u; xn(:,2:end)], lambdaM);
     
     if mseC(trial) < 10^-4 && mseA(trial) < 10^-3
         fprintf('this trial was good with %i theta and %i thetadot \n', x(1,1), x(2,1));
     end
     
-    fprintf('Trial %i/%i: TD = %i    Actor Error = %i\n', trial, Ntrials, mseC(trial), mseA(trial))
+    fprintf('Trial %i/%i: TD = %i  Actor = %i   Model = %i\n', trial, Ntrials, mseC(trial), mseA(trial), mseM(trial))
    
     % Simulation time computation
     comptime( trial ) = toc;
