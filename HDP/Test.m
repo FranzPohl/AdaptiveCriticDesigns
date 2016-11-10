@@ -7,11 +7,12 @@ mfilepath = fileparts(which(mfilename));
 addpath(fullfile(mfilepath,'../ANN')); 
 addpath(fullfile(mfilepath,'../PLANT')); 
 addpath(fullfile(mfilepath,'../MODEL'));
-load('actorSimplePendulum.mat')
+%load('actorSimplePendulum.mat')
 load('model.mat')
+load('Exp1HDP.mat')
 
 % Start Simulation
-tmax = 11;
+tmax = 5;
 dt   = 0.005;
 t = 0:dt:tmax;
 n = length(t);
@@ -21,8 +22,8 @@ xn= mapminmax('apply',x, pty);
 
 for i = 1:n-1
     
-    if mod(i,600) == 0
-        x(:,i) = [randn(1);0];
+    if mod(i,250) == 0
+        x(:,i) = [randn(1)*2;0];
         x(1,i) = x(1,i) + 2*pi*[abs(x(1,i))>pi]*-sign(x(1,i));
         xn(:,i)= mapminmax('apply',x(:,i), pty);
     end
@@ -40,24 +41,25 @@ end
 
 savePlot = true;
 r2d = 180/pi;
+%du = mapminmax('reverse',[xn(:,1:end-1); u], ptx);
 
 figure()
 subplot(3,1,1)
-plot(t(1:length(u)),u)
-xlabel('time [s]'); ylabel('actions')
+plot(t(1:length(u)),du(3,:),'k')
+xlabel('time [s]'); ylabel('actions [Nm]')
 xlim([0 tmax]);
 grid on
 subplot(3,1,2)
-plot(t(1:length(x)),x(1,:)*r2d)
+plot(t(1:length(x)),x(1,:)*r2d,'k')
 xlabel('time [s]'); ylabel('\theta [deg]')
 xlim([0 tmax]);
 grid on
 subplot(3,1,3)
-plot(t(1:length(x)),x(2,:)*r2d)
+plot(t(1:length(x)),x(2,:)*r2d,'k')
 xlabel('time [s]'); ylabel('\theta_d [deg/s]')
 xlim([0 tmax]);
 grid on
 
-if savePlot == true;
-    print('HDPResults','-deps','-r300');
+if savePlot == false;
+    print('HDPResults','-depsc','-r300');
 end

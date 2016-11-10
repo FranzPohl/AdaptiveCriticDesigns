@@ -68,7 +68,7 @@ figure()
 subplot(3,1,1)
 plot(t(1:length(denorm)),denorm(3,:))
 xlabel('time [s]'); ylabel('actions')
-xlim([0 tmax]);
+xlim([0 tend]);
 grid on
 
 subplot(3,1,2)
@@ -77,7 +77,7 @@ hold on
 plot(t(1:length(x)),xhat2(1,:)*r2d)
 hold off
 xlabel('time [s]'); ylabel('\theta [deg]')
-xlim([0 tmax]);
+xlim([0 tend]);
 grid on
 legend('Plant response','Model response','Location','SouthEast');
 
@@ -87,7 +87,7 @@ hold on
 plot(t(1:length(x)), xhat2(2,:))
 hold off
 xlabel('time [s]'); ylabel('\theta_d [deg/s]')
-xlim([0 tmax]);
+xlim([0 tend]);
 grid on
 legend('Plant response','Model response','Location','SouthEast');
 

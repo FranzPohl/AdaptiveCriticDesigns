@@ -7,11 +7,12 @@ mfilepath = fileparts(which(mfilename));
 addpath(fullfile(mfilepath,'../ANN')); 
 addpath(fullfile(mfilepath,'../PLANT')); 
 addpath(fullfile(mfilepath,'../MODEL'));
-load('actorDHP.mat')
+% load('actorDHP.mat')
 load('model.mat')
+load('Exp1DHP.mat')
 
 % Start Simulation
-tmax = 11;
+tmax = 5;
 dt   = 0.005;
 t = 0:dt:tmax;
 n = length(t);
@@ -21,8 +22,8 @@ xn= mapminmax('apply',x, pty);
 
 for i = 1:n-1
     
-    if mod(i,600) == 0
-        x(:,i) = [randn(1);0];
+    if mod(i,250) == 0
+        x(:,i) = [randn(1)*2;0];
         x(1,i) = x(1,i) + 2*pi*[abs(x(1,i))>pi]*-sign(x(1,i));
         xn(:,i)= mapminmax('apply',x(:,i), pty);
     end
@@ -38,7 +39,7 @@ end
 
 %% plot
 
-savePlot = true;
+savePlot = false;
 r2d = 180/pi;
 
 figure()

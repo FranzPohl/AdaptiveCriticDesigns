@@ -41,7 +41,7 @@ figure();
 plot(lambda(1,:)); 
 hold on; 
 xlabel('timesteps');
-xlim([0,tmax/dt]);
+xlim([0,tend/dt]);
 plot(lambda(2,:));
 legend('dJ/d\theta','dJ/d\theta_d','Location','SouthEast');
 if savePlot == true
