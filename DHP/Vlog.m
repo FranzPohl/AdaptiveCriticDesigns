@@ -24,7 +24,7 @@ if livestream == true
 
         % plot actor shape
         figure(1)
-        subplot(2,5,[4 5 9 10])
+        subplot(2,4,[3 4 7 8])
         surf(X1,X2,Zact)
         title('Actor')
         xlabel('\theta'); ylabel('\theta_{dot}'); zlabel('torque [Nm]');
@@ -35,7 +35,7 @@ if livestream == true
         hold off
         
         % plot pendulum
-        subplot(2,5,[1 2 6 7])
+        subplot(2,5,[1 2 5 6])
         plot([0],[0],'ko','MarkerSize',2);          % pivot point
         hold on
         plot([0 xval],[0 yval],'r','LineWidth',2);  % link

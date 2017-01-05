@@ -68,7 +68,7 @@ x0      = [randn(1,n).*.6;randn(1,n).*0];           % initial conditions
 livestream = false;                                 % set livestream on/off
 VideoFile;                                          % create video variables
 
-Ntrials = 200;                                      % total number of trials
+Ntrials = 300;                                      % total number of trials
 for trial = 1:Ntrials
    
     tic

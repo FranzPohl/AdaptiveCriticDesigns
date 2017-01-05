@@ -48,7 +48,7 @@ n       = length(t);
 r2d     = 180/pi;
 xdl     = 35;                                       % limitation of angular rate
 
-livestream = false;                                 % set livestream on/off
+livestream = true;                                  % set livestream on/off
 VideoFile;                                          % create video variables
 
 Ntrials = 200; %400
@@ -64,6 +64,9 @@ for trial = 1:Ntrials
     
     % initial state
     x = [randn(1)*0.6; 0]; % xn0
+    if mod(trial,50) == 0 || trial == 1;
+        x = [randn(1)*1.3; 0];
+    end
     xn= mapminmax('apply',x,pty); 
     eps = eps0 * exp( -.1*trial );
     
@@ -128,7 +131,7 @@ end
 
 %% Plotting
 
-save('Exp10DHP','Rlog','mseC','mseA','critic','actor');
+%save('Exp10DHP','Rlog','mseC','mseA','critic','actor');
 
 PlotACResults
 
